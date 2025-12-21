@@ -1,63 +1,52 @@
-const body = document.body
+// ================== CONSTANTS ==================
+const body = document.body;
+const themeBtn = document.querySelector("#btn-theme");
+const hamburgerBtn = document.querySelector(".nav__hamburger i");
+const navList = document.querySelector(".nav__list");
+const scrollTopBtn = document.querySelector(".scroll-top");
 
-const btnTheme = document.querySelector('.fa-moon')
-const btnHamburger = document.querySelector('.fa-bars')
+const THEME_KEY = "portfolio-theme";
+const ICON_KEY = "portfolio-btn-theme";
 
-const addThemeClass = (bodyClass, btnClass) => {
-  body.classList.add(bodyClass)
-  btnTheme.classList.add(btnClass)
-}
+// ================== THEME ==================
+const applyTheme = (theme, icon) => {
+  body.className = theme;
+  themeBtn.className = `fas ${icon}`;
 
-const getBodyTheme = localStorage.getItem('portfolio-theme')
-const getBtnTheme = localStorage.getItem('portfolio-btn-theme')
+  localStorage.setItem(THEME_KEY, theme);
+  localStorage.setItem(ICON_KEY, icon);
+};
 
-addThemeClass(getBodyTheme, getBtnTheme)
+const loadTheme = () => {
+  const savedTheme = localStorage.getItem(THEME_KEY) || "light";
+  const savedIcon = localStorage.getItem(ICON_KEY) || "fa-moon";
+  applyTheme(savedTheme, savedIcon);
+};
 
-const isDark = () => body.classList.contains('dark')
+const toggleTheme = () => {
+  const isDark = body.classList.contains("dark");
 
-const setTheme = (bodyClass, btnClass) => {
+  applyTheme(isDark ? "light" : "dark", isDark ? "fa-moon" : "fa-sun");
+};
 
-	body.classList.remove(localStorage.getItem('portfolio-theme'))
-	btnTheme.classList.remove(localStorage.getItem('portfolio-btn-theme'))
+// ================== NAVIGATION ==================
+const toggleNav = () => {
+  const isOpen = navList.classList.toggle("display-nav-list");
 
-  addThemeClass(bodyClass, btnClass)
+  hamburgerBtn.classList.toggle("fa-bars", !isOpen);
+  hamburgerBtn.classList.toggle("fa-times", isOpen);
+};
 
-	localStorage.setItem('portfolio-theme', bodyClass)
-	localStorage.setItem('portfolio-btn-theme', btnClass)
-}
+// ================== SCROLL TO TOP ==================
+const handleScroll = () => {
+  const show = window.scrollY > 500;
+  scrollTopBtn.style.display = show ? "block" : "none";
+};
 
-const toggleTheme = () =>
-	isDark() ? setTheme('light', 'fa-moon') : setTheme('dark', 'fa-sun')
+// ================== EVENTS ==================
+themeBtn.addEventListener("click", toggleTheme);
+hamburgerBtn.addEventListener("click", toggleNav);
+window.addEventListener("scroll", handleScroll);
 
-btnTheme.addEventListener('click', toggleTheme)
-
-const displayList = () => {
-	const navUl = document.querySelector('.nav__list')
-
-	if (btnHamburger.classList.contains('fa-bars')) {
-		btnHamburger.classList.remove('fa-bars')
-		btnHamburger.classList.add('fa-times')
-		navUl.classList.add('display-nav-list')
-	} else {
-		btnHamburger.classList.remove('fa-times')
-		btnHamburger.classList.add('fa-bars')
-		navUl.classList.remove('display-nav-list')
-	}
-}
-
-btnHamburger.addEventListener('click', displayList)
-
-const scrollUp = () => {
-	const btnScrollTop = document.querySelector('.scroll-top')
-
-	if (
-		body.scrollTop > 500 ||
-		document.documentElement.scrollTop > 500
-	) {
-		btnScrollTop.style.display = 'block'
-	} else {
-		btnScrollTop.style.display = 'none'
-	}
-}
-
-document.addEventListener('scroll', scrollUp)
+// ================== INIT ==================
+loadTheme();
