@@ -12,21 +12,24 @@ const ICON_KEY = "portfolio-btn-theme";
 
 // ================== THEME ==================
 const applyTheme = (theme, icon) => {
-  // Add transition class for smooth theme change
-  body.style.transition = "background-color 0.3s ease, color 0.3s ease";
+  // Add a class to body to enable smooth transitions
+  body.classList.add('theme-transitioning');
   
-  body.className = theme;
-  if (themeBtnIcon) {
-    themeBtnIcon.className = `fas ${icon}`;
-  }
+  // Small delay to ensure transition starts
+  requestAnimationFrame(() => {
+    body.className = theme + ' theme-transitioning';
+    if (themeBtnIcon) {
+      themeBtnIcon.className = `fas ${icon}`;
+    }
 
-  localStorage.setItem(THEME_KEY, theme);
-  localStorage.setItem(ICON_KEY, icon);
-  
-  // Remove transition after theme is applied to avoid affecting other animations
-  setTimeout(() => {
-    body.style.transition = "";
-  }, 300);
+    localStorage.setItem(THEME_KEY, theme);
+    localStorage.setItem(ICON_KEY, icon);
+    
+    // Remove transition class after transition completes
+    setTimeout(() => {
+      body.classList.remove('theme-transitioning');
+    }, 400);
+  });
 };
 
 const loadTheme = () => {
